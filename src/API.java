@@ -32,14 +32,13 @@ public class API {
     }
 
     public JSONObject Request(String str) {
-        HttpURLConnection connection = null;
-        String str_url = str;
+        HttpURLConnection connection;
         String line;
         BufferedReader reader;
-        StringBuffer responsecontent = new StringBuffer();
+        StringBuilder responsecontent = new StringBuilder();
 
         try {
-            URL url = new URL(str_url);
+            URL url = new URL(str);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(5000);
@@ -61,11 +60,9 @@ public class API {
 
         } catch (MalformedURLException e) {
             System.out.println("User Unable to manipulate address (MalformedURLException)");
-            connection.disconnect();
             return null;
         } catch (IOException e) {
             System.out.println("User Unable to manipulate address (IOException)");
-            connection.disconnect();
             return null;
         }
 
@@ -81,10 +78,9 @@ public class API {
     }
 
     public Pokemon prevRequest(Pokemon pokemon) {
-        Pokemon new_pokemon;
+        Pokemon new_pokemon = new Pokemon();
         JSONObject obj;
         String str_url;
-        String name;
         int curr_id = pokemon.getId();
         if (curr_id != 1) {
             int new_id = curr_id - 1;
@@ -92,17 +88,16 @@ public class API {
         } else {
             str_url = "https://pokeapi.co/api/v2/pokemon/" + max_num_pokemon + "/";
         }
-        name = Request(str_url).getJSONArray("forms").getJSONObject(0).getString("name");
         obj = Request(str_url);
-        new_pokemon = producePokemon(obj, name);
+        new_pokemon.setPokemon(obj);
         return new_pokemon;
+
     }
 
     public Pokemon nextRequest(Pokemon pokemon) {
-        Pokemon new_pokemon;
+        Pokemon new_pokemon = new Pokemon();
         JSONObject obj;
         String str_url;
-        String name;
         int curr_id = pokemon.getId();
         if (curr_id != max_num_pokemon) {
             int new_id = curr_id + 1;
@@ -110,17 +105,17 @@ public class API {
         } else {
             str_url = "https://pokeapi.co/api/v2/pokemon/" + 1 + "/";
         }
-        name = Request(str_url).getJSONArray("forms").getJSONObject(0).getString("name");
         obj = Request(str_url);
-        new_pokemon = producePokemon(obj, name);
+        new_pokemon.setPokemon(obj);
         return new_pokemon;
     }
 
 
     public Pokemon searchRequest(String str) throws PokemonNotFoundException {
         if (pokemon_bank.containsKey(str)) {
+            Pokemon pokemon = new Pokemon();
             JSONObject obj = Request(pokemon_bank.get(str));
-            Pokemon pokemon = producePokemon(obj, str);
+            pokemon.setPokemon(obj);
             return pokemon;
         } else {
             throw new PokemonNotFoundException();

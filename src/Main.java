@@ -1,12 +1,6 @@
 import org.json.JSONObject;
 
 
-
-//        HttpClient client = HttpClient.newHttpClient();
-//        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://pokeapi.co/api/v2/pokemon/1/")).build();
-//        client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(HttpResponse::body).thenAccept(Main::parse).join();
-//"https://pokeapi.co/api/v2/pokemon?limit=151&offset=0"
-
 public class Main {
 
 
@@ -19,8 +13,10 @@ public class Main {
         try {
             Pokemon p = api.searchRequest("magmar");
             System.out.println(p.getId());
-            Pokemon prev_p = api.nextRequest(p);
-            System.out.println(prev_p.getName());
+            Pokemon next = api.nextRequest(p);
+            System.out.println(next.getName());
+            Pokemon prev = api.prevRequest(p);
+            System.out.println(prev.getName());
         } catch (PokemonNotFoundException e) {
             e.printStackTrace();
         }

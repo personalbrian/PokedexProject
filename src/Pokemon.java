@@ -1,9 +1,12 @@
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.HashSet;
 
 public class Pokemon {
 
     public String url_image;
-    public String name; //done
+    public String name;
     public HashSet<String> types;
     public String entry;
     public int atk_stat;
@@ -17,6 +20,29 @@ public class Pokemon {
     public Pokemon() {
         types = new HashSet<>();
 
+    }
+
+    public void setPokemon(JSONObject obj) {
+        setId(obj.getInt("id"));
+        setName(obj.getJSONArray("forms").getJSONObject(0).getString("name").toUpperCase());
+        JSONArray array = obj.getJSONArray("stats");
+        setHp_stat(array.getJSONObject(0).getInt("base_stat"));
+        setAtk_stat(array.getJSONObject(1).getInt("base_stat"));
+        setDef_stat(array.getJSONObject(2).getInt("base_stat"));
+        setSpatk_stat(array.getJSONObject(3).getInt("base_stat"));
+        setSpdef_stat(array.getJSONObject(4).getInt("base_stat"));
+        setSpe_stat(array.getJSONObject(5).getInt("base_stat"));
+        String str_img = obj.getJSONObject("sprites").getString("front_default");
+        setUrl_image(str_img);
+        JSONArray types_array = obj.getJSONArray("types");
+        for (int i = 0; i < types_array.length(); i++) {
+            String str_type = types_array.getJSONObject(i).getJSONObject("type").getString("name");
+            getTypes().add(str_type);
+        }
+        String flavour_string = obj.getJSONObject("species").getString("url");
+        API api = API.getInstance();
+        JSONObject species_obj = api.Request(flavour_string);
+        setEntry(species_obj.getJSONArray("flavor_text_entries").getJSONObject(20).getString("flavor_text"));
     }
 
     public String getName() {
